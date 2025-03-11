@@ -29,3 +29,25 @@ func ListBuckets(minioUrl, accessKeyID, secreetAccessKey string) ([]minio.Bucket
 
 	return buckets, nil
 }
+
+func FPutObjects(bucketName, objectName, filePath, minioUrl, accessKeyID, secreetAccessKey string) (string, error) {
+	// Upload the zip file
+	minioClient := NewMinioAPi(minioUrl, accessKeyID, secreetAccessKey)
+	_, err := minioClient.FPutObject(context.Background(), bucketName, objectName, filePath, minio.PutObjectOptions{})
+	if err != nil {
+		log.Fatalln(err)
+	}
+
+	return "Success", nil
+}
+
+func FGetObjects(bucketName, objectName, filePath, minioUrl, accessKeyID, secreetAccessKey string) (string, error) {
+	// Download the zip file
+	minioClient := NewMinioAPi(minioUrl, accessKeyID, secreetAccessKey)
+	err := minioClient.FGetObject(context.Background(), bucketName, objectName, filePath, minio.GetObjectOptions{})
+	if err != nil {
+		log.Fatalln(err)
+	}
+
+	return "Success", nil
+}
