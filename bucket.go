@@ -51,3 +51,21 @@ func FGetObjects(bucketName, objectName, filePath, minioUrl, accessKeyID, secree
 
 	return "Success", nil
 }
+
+func ListObjects(bucketName, minioUrl, accessKeyID, secreetAccessKey, Prefix string) ([]minio.ObjectInfo, error) {
+	// List all objects from the server
+	minioClient := NewMinioAPi(minioUrl, accessKeyID, secreetAccessKey)
+	objectsCh := minioClient.ListObjects(context.Background(), bucketName, minio.ListObjectsOptions{
+		Prefix:    Prefix,
+		Recursive: true,
+	})
+	var objects []minio.ObjectInfo
+	for object := range objectsCh {
+		if object.Err != nil {
+			log.Fatalln(object.Err)
+		}
+		objects = append(objects, object)
+	}
+
+	return objects, nil
+}
